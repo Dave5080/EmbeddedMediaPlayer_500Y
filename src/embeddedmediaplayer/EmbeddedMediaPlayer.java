@@ -18,17 +18,16 @@ import javafx.util.Duration;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
 
-@SuppressWarnings("SpellCheckingInspection")
+@SuppressWarnings("ALL")
 public class EmbeddedMediaPlayer extends Application {
 
-    private Thread winnersThread;
-    private Group mediaRoot, imageRoot;
-
+    private Group mediaRoot;
     @Override
     public void start(Stage primaryStage) {
         Configs.getConfig();
@@ -38,67 +37,39 @@ public class EmbeddedMediaPlayer extends Application {
         primaryStage.setTitle("I.T.E.T. Leonardo Da Vinci");
         primaryStage.setFullScreen(true);
         mediaRoot = new Group();
-        imageRoot = new Group();
         Scene scene = new Scene(mediaRoot, 1920, 1080);
         MediaView mediaView = new MediaView();
         mediaRoot.getChildren().add(mediaView);
-        ImageView imageView = new ImageView();
-        MediaView sView = new MediaView();
-        imageRoot.getChildren().add(imageView);
-        imageRoot.getChildren().add(sView);
-        System.out.println(imageRoot.getChildren().contains(sView));
-        openNewVideo(scene, mediaView, Configs.INTRO.get(),
-                event -> (winnersThread = new Thread(() -> sayWinners(scene, mediaView, imageView, sView))).start(),
-                () -> mediaView.getMediaPlayer().seek(Duration.ZERO));
         primaryStage.setScene(scene);
         primaryStage.show();
+        createSocket().start();
     }
 
-    private final Object lock = new Object();
-    private void sayWinners(Scene scene, MediaView mView, ImageView iView, MediaView sView) {
-        for(int i = 0; i < Configs.CATEGORIES.getInt(); i++) {
-            synchronized (lock) {
-                try {
-                    while (true) {
-                        openNewVideo(scene, mView, Configs.SUSPANCE.get(), event -> {
-                        }, () -> new Thread(() -> {
-                            synchronized (lock) {
-                                lock.notifyAll();
-                            }
-                        }).start());
-                        lock.wait();
-                        openNewImage(scene, iView, String.format("%s.jpg", winner(i)), event -> {
-                            if (sView.getMediaPlayer()!= null)
-                                sView.getMediaPlayer().stop();
-                            if (event.getCode().equals(KeyCode.END)) winnersThread.interrupt();
-                            else new Thread(() -> {
-                                synchronized (lock) {
-                                    lock.notifyAll();
-                                }
-                            }).start();
-                        }, i, sView, Configs.WINNERSOUND.get());
-                        lock.wait();
-                    }
-                } catch (InterruptedException ignored) {
-                }
-                winners = new HashSet<>();
-            }
+    public String execute(String cmd){
+        switch (cmd){
+            case "start":
+                //TODO: Cosa fare a start
+                return "done";
+            case "play":
+                //TODO: Cosa fare a play
+                return "done";
+            case "pause":
+                //TODO: Cosa fare a pause
+                return "done";
+            case "exit":
+                //TODO: Cosa fare a exit
+                return "done";
+            default:
+                //TODO: Cosa fare in error
+                return "error";
         }
-            openNewImage(scene, iView, Configs.ENDIMAGE.get(), event -> System.exit(1), -1, sView, Configs.ENDSOUND.get());
     }
 
-    private Set<Integer> winners = new HashSet<>();
-    private int winner(int i) {
-        Random rand = new Random();
-        int w;
-        do w = rand.nextInt(Configs.CANDIDATES.getInt(i));
-        while (winners.contains(w) || new File(String.format("%s%d%s%s.jpg",
-                Configs.PATH.get(),
-                i,
-                File.pathSeparatorChar,
-                w)).exists());
-        winners.add(w);
-        return w;
+    private ConnectionThread createSocket(){
+        try {
+            return new ConnectionThread(this, new ServerSocket(25000).accept());
+        } catch (IOException e) {}
+        return null;
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -114,21 +85,6 @@ public class EmbeddedMediaPlayer extends Application {
 
     private void openNewVideo(Scene scene, MediaView view, String path, EventHandler<KeyEvent> event, Runnable onEnd){
         openNewVideo(scene, view, path, event, onEnd, -1);
-    }
-
-    private void openNewImage(Scene scene, ImageView view, String path,
-                              EventHandler<KeyEvent> event, int i, MediaView mView, String soundPath){
-        view.setImage(new Image(getResource(path, i)));
-        if(mView != null && soundPath != null) {
-            if(mView.getMediaPlayer() != null) mView.getMediaPlayer().stop();
-            if(!soundPath.equals("null")) {
-                System.out.println("Inizio apertura audio");
-                mView.setMediaPlayer(new MediaPlayer(new Media(getResource(soundPath, -1))));
-                mView.getMediaPlayer().setAutoPlay(true);
-            }
-        }
-        scene.setRoot(imageRoot);
-        scene.setOnKeyPressed(event);
     }
 
     private String getResource(String resourceName, int i){
