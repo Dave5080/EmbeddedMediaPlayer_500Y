@@ -28,6 +28,8 @@ import java.util.Set;
 public class EmbeddedMediaPlayer extends Application {
 
     private Group mediaRoot;
+    private Scene scene;
+    private MediaView view;
     @Override
     public void start(Stage primaryStage) {
         Configs.getConfig();
@@ -37,30 +39,32 @@ public class EmbeddedMediaPlayer extends Application {
         primaryStage.setTitle("I.T.E.T. Leonardo Da Vinci");
         primaryStage.setFullScreen(true);
         mediaRoot = new Group();
-        Scene scene = new Scene(mediaRoot, 1920, 1080);
-        MediaView mediaView = new MediaView();
-        mediaRoot.getChildren().add(mediaView);
+        scene = new Scene(mediaRoot, 1920, 1080);
+        view = new MediaView();
+        mediaRoot.getChildren().add(view);
         primaryStage.setScene(scene);
         primaryStage.show();
         createSocket().start();
     }
 
+    Timer timer = new Timer(this);
     public String execute(String cmd){
         switch (cmd){
             case "start":
-                //TODO: Cosa fare a start
+                openNewVideo(scene, view, Configs.VIDEONAME.get(), null, null);
                 return "done";
             case "play":
-                //TODO: Cosa fare a play
+                timer.interrupt();
+                view.getMediaPlayer().play();
                 return "done";
             case "pause":
-                //TODO: Cosa fare a pause
+                view.getMediaPlayer().pause();
+                timer.start();
                 return "done";
             case "exit":
-                //TODO: Cosa fare a exit
+                view.getMediaPlayer().stop();
                 return "done";
             default:
-                //TODO: Cosa fare in error
                 return "error";
         }
     }
@@ -75,9 +79,8 @@ public class EmbeddedMediaPlayer extends Application {
     @SuppressWarnings("SameParameterValue")
     private void openNewVideo(Scene scene, MediaView view, String path, EventHandler<KeyEvent> event, Runnable onEnd, int i){
         if(view.getMediaPlayer() != null) view.getMediaPlayer().stop();
-        MediaPlayer player = new MediaPlayer(new Media(getResource(path,i)));
+        MediaPlayer player = new MediaPlayer(new Media(getResource(path)));
         player.setOnEndOfMedia(onEnd);
-        player.setAutoPlay(true);
         view.setMediaPlayer(player);
         scene.setRoot(mediaRoot);
         scene.setOnKeyPressed(event);
@@ -87,15 +90,11 @@ public class EmbeddedMediaPlayer extends Application {
         openNewVideo(scene, view, path, event, onEnd, -1);
     }
 
-    private String getResource(String resourceName, int i){
+    private String getResource(String resourceName){
         try {
-            if(i >= 0)
-                return new File(String.format("%s%d/%s",
+                return new File(String.format("%s/%s",
                         Configs.PATH.get(),
-                        i,
                         resourceName)).toURI().toURL().toExternalForm();
-            else
-                return new File(resourceName).toURI().toURL().toExternalForm();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

@@ -3,18 +3,13 @@ package embeddedmediaplayer;
 import java.io.*;
 import java.util.Properties;
 
-@SuppressWarnings({"unused", "SpellCheckingInspection"})
+@SuppressWarnings({"unused"})
 public enum Configs {
 
-    CATEGORIES("CATEGORIES", "2"),
     PATH("PATH", "images"),
-    INTRO("INTRO", "INTRO.mp4"),
-    SUSPANCE("SUSPANCE", "SUSPANCE.mp4"),
-    CANDIDATES("CANDIDATES", "150"),
     SCREEN("SCREENS", "0"),
-    ENDIMAGE("ENDIMAGE", "END.jpg"),
-    WINNERSOUND("WINNERSOUND", "APPLAUSI.mp3"),
-    ENDSOUND("ENDSOUND", "null");
+    TIMER("TIMER", "30000"),
+    VIDEONAME("VIDEONAME", "video.mp4");
 
     private static Properties config = null;
     private String key, defaultVal;
@@ -40,7 +35,6 @@ public enum Configs {
         return Integer.parseInt(get(i));
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void getConfig(){
         if (config != null)
             return;
@@ -50,11 +44,6 @@ public enum Configs {
             createConfig(config, tmpFile);
         else
             loadConfig(config, tmpFile);
-        for(int i = 0; i < CATEGORIES.getInt(); i++) {
-            tmpFile = new File(String.format("%s%d",PATH.get(),i));
-            if (!tmpFile.exists())
-                tmpFile.mkdirs();
-        }
     }
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void createConfig(Properties config, File tmpFile){
