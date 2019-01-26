@@ -49,9 +49,10 @@ public class EmbeddedMediaPlayer extends Application {
 
     Timer timer = new Timer(this);
     public String execute(String cmd){
+        System.out.println(cmd);
         switch (cmd){
             case "start":
-                openNewVideo(scene, view, Configs.VIDEONAME.get(), null, null);
+                openNewVideo(scene, view, Configs.VIDEONAME.get(), ()->execute("start"));
                 return "done";
             case "play":
                 timer.interrupt();
@@ -61,6 +62,9 @@ public class EmbeddedMediaPlayer extends Application {
                 view.getMediaPlayer().pause();
                 timer.start();
                 return "done";
+            case "stop":
+                view.getMediaPlayer().pause();
+                view.getMediaPlayer().seek(Duration.millis(0));
             case "exit":
                 view.getMediaPlayer().stop();
                 return "done";
@@ -77,17 +81,12 @@ public class EmbeddedMediaPlayer extends Application {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void openNewVideo(Scene scene, MediaView view, String path, EventHandler<KeyEvent> event, Runnable onEnd, int i){
+    private void openNewVideo(Scene scene, MediaView view, String path, Runnable onEnd){
         if(view.getMediaPlayer() != null) view.getMediaPlayer().stop();
         MediaPlayer player = new MediaPlayer(new Media(getResource(path)));
         player.setOnEndOfMedia(onEnd);
         view.setMediaPlayer(player);
         scene.setRoot(mediaRoot);
-        scene.setOnKeyPressed(event);
-    }
-
-    private void openNewVideo(Scene scene, MediaView view, String path, EventHandler<KeyEvent> event, Runnable onEnd){
-        openNewVideo(scene, view, path, event, onEnd, -1);
     }
 
     private String getResource(String resourceName){

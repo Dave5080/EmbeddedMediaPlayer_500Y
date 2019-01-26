@@ -26,7 +26,7 @@ public class ConnectionThread extends Thread{
             do {
                 input = reader.readLine();
                 writer.println(main.execute(input));
-            } while (input.equalsIgnoreCase("exit"));
+            } while (!input.equalsIgnoreCase("exit"));
         } catch (IOException ignored) {}
     }
 }
