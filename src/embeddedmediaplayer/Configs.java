@@ -3,10 +3,10 @@ package embeddedmediaplayer;
 import java.io.*;
 import java.util.Properties;
 
-@SuppressWarnings({"unused"})
+@SuppressWarnings({"unused", "SpellCheckingInspection"})
 public enum Configs {
 
-    PATH("PATH", "images"),
+    PATH("PATH", "media"),
     SCREEN("SCREENS", "0"),
     TIMER("TIMER", "30000"),
     VIDEONAME("VIDEONAME", "video.mp4");

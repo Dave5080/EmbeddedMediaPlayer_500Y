@@ -71,7 +71,7 @@ public class EmbeddedMediaPlayer extends Application {
 
     private ConnectionThread createSocket(){
         try {
-            return new ConnectionThread(this, new ServerSocket(25000).accept());
+            return new ConnectionThread(this, new ServerSocket(25000));
         } catch (IOException e) {}
         return null;
     }
