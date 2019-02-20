@@ -30,7 +30,6 @@ public class EmbeddedMediaPlayer extends Application {
     private Group mediaRoot;
     private Scene scene;
     private MediaView view;
-    private MediaView musicView;
     @Override
     public void start(Stage primaryStage) {
         Configs.getConfig();
@@ -43,29 +42,27 @@ public class EmbeddedMediaPlayer extends Application {
         scene = new Scene(mediaRoot, 1920, 1080);
         view = new MediaView();
         mediaRoot.getChildren().add(view);
-        mediaRoot.getChildren().add(musicView);
         primaryStage.setScene(scene);
         primaryStage.show();
         createSocket().start();
     }
 
+    Timer timer = new Timer(this);
     public String execute(String cmd){
         switch (cmd){
             case "start":
                 openNewVideo(scene, view, Configs.VIDEONAME.get(), null, null);
-                openNewVideo(scene, musicView, Configs.MUSICNAME.get(), null, null);
                 return "done";
             case "play":
+                timer.interrupt();
                 view.getMediaPlayer().play();
-                musicView.getMediaPlayer().stop();
                 return "done";
             case "pause":
                 view.getMediaPlayer().pause();
-                openNewVideo(scene, musicView, Configs.MUSICNAME.get(), null, null);
+                timer.start();
                 return "done";
             case "exit":
                 view.getMediaPlayer().stop();
-                musicView.getMediaPlayer().stop();
                 return "done";
             default:
                 return "error";
@@ -83,9 +80,7 @@ public class EmbeddedMediaPlayer extends Application {
     private void openNewVideo(Scene scene, MediaView view, String path, EventHandler<KeyEvent> event, Runnable onEnd, int i){
         if(view.getMediaPlayer() != null) view.getMediaPlayer().stop();
         MediaPlayer player = new MediaPlayer(new Media(getResource(path)));
-        player.setAutoPlay(true);
         player.setOnEndOfMedia(onEnd);
-        player.pause();
         view.setMediaPlayer(player);
         scene.setRoot(mediaRoot);
         scene.setOnKeyPressed(event);
