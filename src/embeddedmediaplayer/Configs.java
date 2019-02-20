@@ -9,7 +9,8 @@ public enum Configs {
     PATH("PATH", "media"),
     SCREEN("SCREENS", "0"),
     TIMER("TIMER", "30000"),
-    VIDEONAME("VIDEONAME", "video.mp4");
+    VIDEONAME("VIDEONAME", "video.mp4"),
+    MUSICNAME("MUSICNAME", "musica.mp3");
 
     private static Properties config = null;
     private String key, defaultVal;

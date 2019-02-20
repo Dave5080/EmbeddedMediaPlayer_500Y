@@ -30,6 +30,7 @@ public class EmbeddedMediaPlayer extends Application {
     private Group mediaRoot;
     private Scene scene;
     private MediaView view;
+    private MediaView musicView;
     @Override
     public void start(Stage primaryStage) {
         Configs.getConfig();
@@ -42,6 +43,7 @@ public class EmbeddedMediaPlayer extends Application {
         scene = new Scene(mediaRoot, 1920, 1080);
         view = new MediaView();
         mediaRoot.getChildren().add(view);
+        mediaRoot.getChildren().add(musicView);
         primaryStage.setScene(scene);
         primaryStage.show();
         createSocket().start();
@@ -51,15 +53,19 @@ public class EmbeddedMediaPlayer extends Application {
         switch (cmd){
             case "start":
                 openNewVideo(scene, view, Configs.VIDEONAME.get(), null, null);
+                openNewVideo(scene, musicView, Configs.MUSICNAME.get(), null, null);
                 return "done";
             case "play":
                 view.getMediaPlayer().play();
+                musicView.getMediaPlayer().stop();
                 return "done";
             case "pause":
                 view.getMediaPlayer().pause();
+                openNewVideo(scene, musicView, Configs.MUSICNAME.get(), null, null);
                 return "done";
             case "exit":
                 view.getMediaPlayer().stop();
+                musicView.getMediaPlayer().stop();
                 return "done";
             default:
                 return "error";
