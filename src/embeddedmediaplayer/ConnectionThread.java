@@ -11,6 +11,7 @@ import java.net.Socket;
 public class ConnectionThread extends Thread{
     private ServerSocket clientSocket;
     private EmbeddedMediaPlayer main;
+    public static int counter = 0;
     public  ConnectionThread(EmbeddedMediaPlayer main, ServerSocket socket){
         this.main = main;
         this.clientSocket = socket;
@@ -22,11 +23,37 @@ public class ConnectionThread extends Thread{
             Socket client = clientSocket.accept();
             BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter writer = new PrintWriter(client.getOutputStream());
-            String input;
+            int input;
+            boolean old = false;
+            String val = "";
             do {
-                input = reader.readLine();
-                writer.println(main.execute(input));
-            } while (!input.equalsIgnoreCase("exit"));
+                input = reader.read();
+                switch (input){
+                    case 0:
+                        old = false;
+                        break;
+                    case 1:
+                        if (old)
+                            break;
+                        old = true;
+                        switch (++counter){
+                            case 1:
+                                val = "play";
+                                break;
+                            case 2:
+                                val = "pause";
+                                break;
+                            case 3:
+                                val = "play";
+                                counter = 0;
+                                break;
+                        }
+                        break;
+                    default:
+                        val = "exit";
+                }
+                writer.println(main.execute(val));
+            } while (!val.equalsIgnoreCase("exit"));
         } catch (IOException ignored) {}
     }
 }

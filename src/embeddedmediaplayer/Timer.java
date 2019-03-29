@@ -18,7 +18,9 @@ public class Timer extends Thread{
         setTimerStarted(true);
         try {
             Thread.sleep(Configs.TIMER.getInt());
-
+            main.execute("exit");
+            main.execute("start");
+            ConnectionThread.counter = 0;
         } catch (InterruptedException ignored) {
         } finally {
             setTimerStarted(false);
