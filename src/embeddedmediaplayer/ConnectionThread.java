@@ -21,19 +21,23 @@ public class ConnectionThread extends Thread{
     public void run(){
         try {
             Socket client = clientSocket.accept();
+            System.out.println("connessione effettuata!");
             BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter writer = new PrintWriter(client.getOutputStream());
             int input;
             boolean old = false;
             String val = "";
             do {
-                input = reader.read();
+                boolean connected = client.isConnected();
+                input = Integer.parseInt(reader.readLine());
+                System.out.println(input);
                 switch (input){
                     case 0:
                         old = false;
                         break;
                     case 1:
-                        if (old)
+                        break;
+                        /*if (old)
                             break;
                         old = true;
                         switch (++counter){
@@ -48,7 +52,7 @@ public class ConnectionThread extends Thread{
                                 counter = 0;
                                 break;
                         }
-                        break;
+                        break;*/
                     default:
                         val = "exit";
                 }

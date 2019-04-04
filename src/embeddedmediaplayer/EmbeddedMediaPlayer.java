@@ -37,7 +37,7 @@ public class EmbeddedMediaPlayer extends Application {
         primaryStage.setX(reference.getMinX());
         primaryStage.setY(reference.getMinY());
         primaryStage.setTitle("I.T.E.T. Leonardo Da Vinci");
-        primaryStage.setFullScreen(true);
+        primaryStage.setFullScreen(false);
         mediaRoot = new Group();
         scene = new Scene(mediaRoot, 1920, 1080);
         view = new MediaView();
@@ -71,7 +71,7 @@ public class EmbeddedMediaPlayer extends Application {
 
     private ConnectionThread createSocket(){
         try {
-            return new ConnectionThread(this, new ServerSocket(25000));
+            return new ConnectionThread(this, new ServerSocket(10002));
         } catch (IOException e) {}
         return null;
     }
