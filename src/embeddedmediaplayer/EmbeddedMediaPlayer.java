@@ -5,26 +5,22 @@ import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("SpellCheckingInspection")
 public class EmbeddedMediaPlayer extends Application {
 
     private Group mediaRoot;
@@ -47,19 +43,22 @@ public class EmbeddedMediaPlayer extends Application {
         createSocket().start();
     }
 
-    Timer timer = new Timer(this);
-    public String execute(String cmd){
+    private EmbeddedTimer timer = new EmbeddedTimer(this);
+
+    synchronized String execute(String cmd){
         switch (cmd){
             case "start":
                 openNewVideo(scene, view, Configs.VIDEONAME.get(), null, null);
                 return "done";
             case "play":
-                timer.interrupt();
                 view.getMediaPlayer().play();
+                if(timer.isAlive())
+                    timer.interrupt();
                 return "done";
             case "pause":
                 view.getMediaPlayer().pause();
-                timer.start();
+                if(!timer.isAlive() && !timer.isInterrupted())
+                    timer.start();
                 return "done";
             case "exit":
                 view.getMediaPlayer().stop();
@@ -72,7 +71,7 @@ public class EmbeddedMediaPlayer extends Application {
     private ConnectionThread createSocket(){
         try {
             return new ConnectionThread(this, new ServerSocket(10002));
-        } catch (IOException e) {}
+        } catch (IOException ignored) {}
         return null;
     }
 

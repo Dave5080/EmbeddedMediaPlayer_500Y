@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Player">
+    <output-path>$USER_HOME$/Desktop/MediaPlayer 500Y</output-path>
+    <root id="archive" name="Player.jar">
+      <element id="module-output" name="EmbeddedMediaPlayer" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

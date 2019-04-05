@@ -22,6 +22,7 @@ public class ConnectionThread extends Thread{
         try {
             Socket client = clientSocket.accept();
             System.out.println("connessione effettuata!");
+            main.execute("start");
             BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter writer = new PrintWriter(client.getOutputStream());
             int input;
@@ -30,14 +31,12 @@ public class ConnectionThread extends Thread{
             do {
                 boolean connected = client.isConnected();
                 input = Integer.parseInt(reader.readLine());
-                System.out.println(input);
                 switch (input){
                     case 0:
                         old = false;
                         break;
                     case 1:
-                        break;
-                        /*if (old)
+                        if (old)
                             break;
                         old = true;
                         switch (++counter){
@@ -46,17 +45,15 @@ public class ConnectionThread extends Thread{
                                 break;
                             case 2:
                                 val = "pause";
-                                break;
-                            case 3:
-                                val = "play";
                                 counter = 0;
                                 break;
                         }
-                        break;*/
+                        break;
                     default:
                         val = "exit";
                 }
-                writer.println(main.execute(val));
+                main.execute(val);
+                //writer.println(main.execute(val));
             } while (!val.equalsIgnoreCase("exit"));
         } catch (IOException ignored) {}
     }

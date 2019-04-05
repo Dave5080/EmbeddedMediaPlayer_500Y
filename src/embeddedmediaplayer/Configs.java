@@ -3,14 +3,13 @@ package embeddedmediaplayer;
 import java.io.*;
 import java.util.Properties;
 
-@SuppressWarnings({"unused", "SpellCheckingInspection"})
+@SuppressWarnings( "SpellCheckingInspection")
 public enum Configs {
 
     PATH("PATH", "media"),
     SCREEN("SCREENS", "0"),
     TIMER("TIMER", "30000"),
-    VIDEONAME("VIDEONAME", "video.mp4"),
-    MUSICNAME("MUSICNAME", "musica.mp3");
+    VIDEONAME("VIDEONAME", "video.mp4");
 
     private static Properties config = null;
     private String key, defaultVal;
@@ -24,22 +23,14 @@ public enum Configs {
         return config.getProperty(key);
     }
 
-    public String get(int i){
-        return config.getProperty(String.format("%s%d", key, i));
-    }
-
     public int getInt(){
         return Integer.parseInt(get());
-    }
-
-    public int getInt(int i){
-        return Integer.parseInt(get(i));
     }
 
     public static void getConfig(){
         if (config != null)
             return;
-        File tmpFile = new File("config.proprieties");
+        File tmpFile = new File("config.properties");
         config = new Properties();
         if(!tmpFile.exists())
             createConfig(config, tmpFile);
